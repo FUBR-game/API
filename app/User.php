@@ -52,8 +52,12 @@ use Laravel\Passport\Token;
  * @property-read Collection|Token[] $tokens
  * @property-read int|null $tokens_count
  * @property-read int|null $friends_count
- * @property-read Collection|\App\User[] $friends
+ * @property-read Collection|User[] $friends
  * @property-read int|null $friends_with_count
+ * @property-read Collection|Game[] $game_results
+ * @property-read int|null $game_results_count
+ * @property-read Collection|Game[] $games_played
+ * @property-read int|null $games_played_count
  */
 class User extends Authenticatable
 {
@@ -65,7 +69,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'remember_token',
+        'remember_token', 'google_token',
     ];
 
     /**
@@ -98,5 +102,17 @@ class User extends Authenticatable
     public function friends(): BelongsToMany
     {
         return $this->belongsToMany(__CLASS__, 'friends')->withPivot('user_id', 'friend_id');
+    }
+
+    public function games_played(): BelongsToMany
+    {
+        return $this->belongsToMany(Game::class, 'games_played');
+    }
+
+    public function game_results(): BelongsToMany
+    {
+        return $this->belongsToMany(Game::class, 'game_results')
+            ->using(GameResult::class)
+            ->withPivot(['rank', 'kills', 'has_died', 'dbno', 'damage_dealt', 'damage_taken', 'health_regained', 'mana_spend']);
     }
 }

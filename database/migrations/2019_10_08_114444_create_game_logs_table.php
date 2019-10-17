@@ -16,8 +16,9 @@ class CreateGameLogsTable extends Migration
         Schema::create('game_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedSmallInteger('event_type');
-            $table->text('event_data');
+            $table->json('event_data');
             $table->dateTime('event_triggered');
+
         });
     }
 
