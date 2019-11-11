@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class RedirectIfAuthenticated
@@ -10,8 +11,8 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
+     * @param Request $request
+     * @param Closure $next
      * @param string|null $guard
      * @return mixed
      */
@@ -20,14 +21,7 @@ class RedirectIfAuthenticated
         if (Auth::guard($guard)->check()) {
             $user = \auth()->user();
 
-            if ($user->accessTokens()->where('revoked', '=', false)->where('expires_at', '>', now())->count() > 0) {
-                $tokenObj = $user->accessTokens->last();
-            } else {
-                \Auth::user()->createToken("Launcher");
-                $tokenObj = $user->accessTokens->last();
-            }
-
-            return redirect()->to('api/user');
+            return redirect()->away('fubr://' . base64_encode($user->makeVisible(['google_token'])));
         }
 
         return $next($request);

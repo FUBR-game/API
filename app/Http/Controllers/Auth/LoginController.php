@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Response;
 use Socialite;
 
 class LoginController extends Controller
@@ -42,7 +43,7 @@ class LoginController extends Controller
     /**
      * Redirect the user to the Google authentication page.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function redirectToProvider()
     {
@@ -52,7 +53,7 @@ class LoginController extends Controller
     /**
      * Obtain the user information from Google.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function handleProviderCallback()
     {
@@ -75,15 +76,6 @@ class LoginController extends Controller
             auth()->login($localUser, true);
         }
 
-        if ($localUser->accessTokens()->where('revoked', '=', false)->where('expires_at', '>', now())->count() > 0) {
-            $tokenObj = $localUser->accessTokens->last();
-        } else {
-            \Auth::user()->createToken("Launcher");
-            $tokenObj = $localUser->accessTokens->last();
-        }
-
-        $token = $tokenObj->accessToken;
-        $tokenId = $tokenObj->token;
-        return redirect()->to('api/user');
+        return redirect()->to('/');
     }
 }
