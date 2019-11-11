@@ -58,6 +58,9 @@ use Laravel\Passport\Token;
  * @property-read int|null $game_results_count
  * @property-read Collection|Game[] $games_played
  * @property-read int|null $games_played_count
+ * @property string $email
+ * @method static Builder|User whereEmail($value)
+ * @property-read string $gravatar
  */
 class User extends Authenticatable
 {
@@ -71,6 +74,11 @@ class User extends Authenticatable
     protected $hidden = [
         'remember_token', 'google_token',
     ];
+
+    protected $appends = [
+        "gravatar_icon",
+    ];
+
 
     /**
      * Find the user instance for the given username.
@@ -114,5 +122,13 @@ class User extends Authenticatable
         return $this->belongsToMany(Game::class, 'game_results')
             ->using(GameResult::class)
             ->withPivot(['rank', 'kills', 'has_died', 'dbno', 'damage_dealt', 'damage_taken', 'health_regained', 'mana_spend']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getGravatarIconAttribute(): string
+    {
+        return "https://www.gravatar.com/avatar/" . md5($this->attributes["email"]) . "?s=50";
     }
 }
