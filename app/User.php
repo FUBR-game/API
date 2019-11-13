@@ -109,7 +109,7 @@ class User extends Authenticatable
 
     public function friends(): BelongsToMany
     {
-        return $this->belongsToMany(__CLASS__, 'friends')->withPivot('user_id', 'friend_id');
+        return $this->belongsToMany(__CLASS__, 'friends', 'friend_id', "user_id")->withPivot('user_id', 'friend_id');
     }
 
     public function games_played(): BelongsToMany

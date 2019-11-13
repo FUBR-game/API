@@ -27,11 +27,12 @@ class UserController extends Controller
 
     public function friends(User $user)
     {
-        return response()->json($user->friends);
+        return response()->json(auth()->guard('api')->user()->friends);
     }
 
-    public function addFriend(Request $request, User $user)
+    public function addFriend(Request $request)
     {
+        $user = auth()->guard('api')->user();
         $friend_id = $request->get('user_id');
         $friend = User::findOrFail($friend_id);
 
